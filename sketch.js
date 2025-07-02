@@ -20,7 +20,25 @@ let purpleFlower10
 let purpleFlower11
 let purpleFlower12
 
+let orangeFlower0
+let orangeFlower1
+let orangeFlower2
+let orangeFlower3
+let orangeFlower4
+let orangeFlower5
+let orangeFlower6
+let orangeFlower7
+let orangeFlower8
+let orangeFlower9
+let orangeFlower10
+let orangeFlower11
+let orangeFlower12
+
+
+
 let purpleArray = [];
+let orangeFlowerArray = [];
+
 
 function preload(){
   purpleFlower0 = loadImage ('purpleflower0.png')
@@ -37,11 +55,29 @@ function preload(){
   purpleFlower11 = loadImage ('purpleflower11.png')
   purpleFlower12 = loadImage ('purpleflower12.png')
 
+  orangeFlower0 = loadImage ('orangeflower0.png')
+  orangeFlower1 = loadImage ('orangeflower0.png')
+  orangeFlower2 = loadImage ('orangeflower0.png')
+  orangeFlower3 = loadImage ('orangeflower0.png')
+  orangeFlower4 = loadImage ('orangeflower0.png')
+  orangeFlower5 = loadImage ('orangeflower0.png')
+  orangeFlower6 = loadImage ('orangeflower0.png')
+  orangeFlower7 = loadImage ('orangeflower0.png')
+  orangeFlower8 = loadImage ('orangeflower0.png')
+  orangeFlower9 = loadImage ('orangeflower0.png')
+  orangeFlower10 = loadImage ('orangeflower0.png')
+  orangeFlower11 = loadImage ('orangeflower0.png')
+  orangeFlower12 = loadImage ('orangeflower0.png')
+
 
   purpleArray = [purpleFlower0, purpleFlower1, purpleFlower2, 
     purpleFlower3, purpleFlower4, purpleFlower5, purpleFlower6,
     purpleFlower7, purpleFlower8, purpleFlower9, purpleFlower10,
     purpleFlower11, purpleFlower12]
+
+  orangeFlowerArray = [orangeFlower0, orangeFlower1, orangeFlower2, orangeFlower3, 
+    orangeFlower4, orangeFlower5, orangeFlower6, orangeFlower7, orangeFlower8, 
+    orangeFlower9, orangeFlower10, orangeFlower11, orangeFlower12]
 
 }
 
@@ -101,9 +137,9 @@ function secondYellowFlowerLoop(){
 }
 
 function secondOrangeFlowerLoop(){
-  for (var i = 0; i < purpleArray.length; i++) {
-    let purpleFlowerX = i * 50 - 25;
-  image(purpleArray[i], purpleFlowerX, 460, 50, 50);
+  for (var i = 0; i < orangeFlowerArray.length; i++) {
+    let orangeSecondFlowerX = i * 50 - 25;
+  image(orangeFlowerArray[i], orangeSecondFlowerX, 460, 50, 40);
   }
 }
 
