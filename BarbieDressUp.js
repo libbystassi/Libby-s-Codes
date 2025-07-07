@@ -31,7 +31,7 @@ function setup() {
   background(255, 180, 220); 
   textAlign(CENTER);
   textSize(28);
-  textFont('Comic Sans MS'); // Cute default font
+  textFont('Comic Sans MS'); 
   chosenEvent = random(eventList);
   imageMode(CENTER);
   rectMode(CENTER);
@@ -52,7 +52,7 @@ function draw() {
   barbieCount++; 
 
   fill(255, 180, 220);
-  rect(width / 2, height / 2 - 130, 760, 200);
+  rect(width / 2, 150, 760, 330);
 
   if (gameState === "start") {
     showIntro();
@@ -64,7 +64,7 @@ function draw() {
 }
 
 function showIntro() {
-  fill(255, 20, 147); // Hot pink text
+  fill(255, 20, 147); 
   text("💖 I’ve got a " + chosenEvent + " coming up soon! 💖", width / 2, 100);
   text("Can you help me get ready? ✨", width / 2, 150);
   text("Press key D for Dress or key T for Top & Pants", width / 2, 250);
