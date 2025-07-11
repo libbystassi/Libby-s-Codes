@@ -1,33 +1,31 @@
-
-//go thru comments to check
+//restart button
+//fix hair using phone - crop them all the same then fix dimensions according to crop. curly hair crop rn looks best
 
 let startY;
-let itemHeight; // This is a general itemHeight. Specific items might have different display heights.
+let itemHeight;
 
 let gameState = "introPrompt";
 let selectedTopImage = null;
 let selectedHairImage = null;
-let selectedDressImage = null; // Variable for the selected dress image
+let selectedDressImage = null; 
 let selectedBottomImage = null;
 let selectedShoesImage = null;
 
 let selectedClothes = null;
 
-// New variables for the selection message
 let showTopSelectionMessage = false;
 let showHairSelectionMessage = false;
 let showBottomSelectionMessage = false;
 let showDressSelectionMessage = false; 
 let showShoesSelectionMessage = false
-// Variable for dress selection message
 
 let selectionMessageStartTime = 0;
 let messageDuration = 2000; 
 
-let selectedTopItemName = ""; // To store the name of the selected top
-let selectedHairItemName = ""; // To store the name of the selected top
-let selectedBottomItemName = ""; // To store the name of the selected bottom
-let selectedDressItemName = ""; // To store the name of the selected dress
+let selectedTopItemName = ""; 
+let selectedHairItemName = ""; 
+let selectedBottomItemName = ""; 
+let selectedDressItemName = ""; 
 let selectedShoeItemName = "";
 
 const eventList = [
@@ -50,19 +48,18 @@ let barbieCount = 0;
 let allLogoPositions = [];
 let minDistance;
 
-// Instead of individual image variables, use an array of objects
 let topsData = [];
 let hairData = [];
 let bottomData = [];
-let dressData = []; // Array to hold dress data
-let shoesData = []; // Data for shoes
+let dressData = []; 
+let shoesData = []; 
 
-let dressArray1 = []; // Will hold objects with img and name for dresses
-let dressArray2 = []; // Will hold objects with img and name for dresses
-let topsArray1 = []; // Will hold objects with img and name
-let topsArray2 = []; // Will hold objects with img and name
-let bottomsArray1 = []; // Will hold objects with img and name
-let bottomsArray2 = []; // Will hold objects with img and name
+let dressArray1 = []; 
+let dressArray2 = []; 
+let topsArray1 = []; 
+let topsArray2 = []; 
+let bottomsArray1 = []; 
+let bottomsArray2 = []; 
 let shoesArray1 = [];
 let shoesArray2 = [];
 let hairArray1 = [];
@@ -111,13 +108,15 @@ const ruleSpeedRange = 1.8;
 let activeRules = []; // Added for showingRules state
 let rulesIndex = 0; // Added for showingRules state
 
+let restartOption;
+
 function preload() {
   barbie1 = loadImage('barbie.png');
   barbie2 = loadImage('BarbieLogo2.png');
   barbie3 = loadImage('BarbieLogo3.png');
   model = loadImage('model.png');
 
-  // Load tops and store them with names in topsData
+  // Load clothes and store them with names in topsData
   topsData = [
     { img: loadImage('top1.png'), name: "Too extravagant. Minus one life. 3 lives remaining." },
     { img: loadImage('top2.png'), name: "Too much collarbone. Minus one life. 3 lives remaining." },
@@ -157,16 +156,15 @@ function preload() {
     { img: loadImage('bottom10.png'), name: "Too attention-seeking. Minus one life. 2 lives remaining." }
   ];
 
-  // Load dresses and store them with names in dressData
   dressData = [
     { img: loadImage('dress1.png'), name: "Too bland. Minus one life. 2 lives remaining." },
     { img: loadImage('dress2.png'), name: "Too tight. Minus one life. 2 lives remaining." },
     { img: loadImage('dress3.png'), name: "Too short. Minus one life. 2 lives remaining." },
     { img: loadImage('dress4.png'), name: "Too low. Minus one life. 2 lives remaining." },
-    // Add more dresses as needed
+    // Add more dresses maybe
   ];
 
-  // Load shoes data 
+
   shoesData = [
     { img: loadImage('shoes1.png'), name: "Too high. Minus one life. 1 life remaining." },
     { img: loadImage('shoes2.png'), name: "Too flashy. Minus one life. 1 life remaining." },
@@ -178,7 +176,6 @@ function preload() {
 }
 
 function setup() {
-  // Populate topsArray1 and topsArray2 from topsData
   topsArray1 = topsData.slice(0, 5);
   topsArray2 = topsData.slice(5, 10);
 
@@ -188,11 +185,9 @@ function setup() {
   bottomsArray1 = bottomData.slice(0, 5);
   bottomsArray2 = bottomData.slice(5, 10);
 
-  // Populate dressArray1 and dressArray2 from dressData
   dressArray1 = dressData.slice(0, Math.ceil(dressData.length / 2));
   dressArray2 = dressData.slice(Math.ceil(dressData.length / 2));
 
-  // Populate shoesArray1 and shoesArray2 from shoesData
   shoesArray1 = shoesData.slice(0, 3);
   shoesArray2 = shoesData.slice(3, 6);
 
@@ -203,8 +198,7 @@ function setup() {
   chosenEvent = random(eventList);
   imageMode(CENTER);
   rectMode(CENTER);
-
-  minDistance = width * 0.08; //relative to width
+  minDistance = width * 0.08; 
 }
 
 function windowResized() {
@@ -212,9 +206,8 @@ function windowResized() {
 }
 
 function draw() {
-  itemHeight = height / 6.5; // Re-define itemHeight for general use in draw
+  itemHeight = height / 6.5; 
 
-  // Handle the selection message states first, and the new game over state
   if (gameState === "showingTopSelectionMessage") {
     displayTopSelectionMessage();
     return;
@@ -240,23 +233,21 @@ function draw() {
     return;
   }
 
-  // --- Handle the game over state ---
   if (gameState === "gameOverLose") {
-    background(0); // Black background
-    fill(255);      // White text
+    background(0); 
+    fill(255);     
     textSize(height / 15);
     text("YOU LOSE!", width / 2, height / 2);
     return; // Stop drawing anything else
   }
-  // --- END NEW ---
 
-  // This block handles the intro and rule-showing states.
+  // This block handles the intro.
   if (["introPrompt", "noOption", "rulesPrompt", "showingRules"].includes(gameState)) {
     runIntroFlow();
     return; // Stop drawing the rest of the scene if in intro flow
   }
 
-  // Barbie logo animation in the background (moved up so it's always behind)
+  // Barbie logo animation in the background
   if (barbieCount === 0 || barbieCount === 200) {
     background(247, 215, 233);
     allLogoPositions = [];
@@ -270,20 +261,17 @@ function draw() {
   }
   barbieCount++;
 
-  // *** MODIFIED LOGIC FOR MODEL AND CLOTHING DISPLAY ***
 
   // Only draw the model if in the "start" state (before any clothes are picked)
   if (gameState === "start") {
     image(model, width / 2, height / 2 + height * 0.085, width * 0.21, height * 0.6);
   }
 
-  // Draw the selected dress if it's not null (regardless of other items)
+  // Draw the selected dress if it's not null 
   if (selectedDressImage !== null) {
-    // Adjust these coordinates and dimensions to fit the dress in the model's position
     image(selectedDressImage, width / 2, 1.9*(height / 3), width * 0.15, height * 0.36);
   }
 
-  // Draw selected top and bottom only if a dress hasn't been selected
   if (selectedDressImage === null) {
     if (selectedTopImage !== null) {
       image(selectedTopImage, width / 2, height / 1.84, width / 10, itemHeight);
@@ -294,7 +282,7 @@ function draw() {
     }
   }
 
-  // Draw selected shoes and hair (these should always appear if selected)
+  // Draw selected shoes and hair 
   if (selectedShoesImage !== null) {
     image(selectedShoesImage, width / 2, height / 1.14, width / 23, height / 9);
   }
@@ -302,8 +290,6 @@ function draw() {
   if (selectedHairImage !== null) {
     image(selectedHairImage, width / 2, height / 2.3, width / 13, itemHeight);
   }
-
-  // *** END MODIFIED LOGIC ***
 
   // Pink rectangle at the top
   stroke(227, 20, 131);
@@ -318,6 +304,12 @@ function draw() {
   } else {
     showResponse();
     showDoneButton();
+  }    
+
+  if (gameState === "start" || gameState === "puttingOnTop" || gameState === "puttingOnBottoms" || gameState === "puttingOnShoes" || gameState === "puttingOnHair" || gameState === "puttingOnDress" || gameState === "done" || gameState === "gameOverLose") {
+    drawPinkButton(width / 8, height / 16, "Restart");
+    //the button is working but the colors are not
+    restartOption = true;
   }
 }
 
@@ -332,7 +324,7 @@ function displayTopSelectionMessage() {
   textSize(height / 20); // Adjust text size as needed
   text(selectedTopItemName, width / 2, height / 2);
 
-  // Check if 5 seconds have passed
+  // Check if 2 seconds have passed
   if (millis() - selectionMessageStartTime >= messageDuration) {
     showTopSelectionMessage = false;
     background(247, 215, 233);
@@ -351,7 +343,7 @@ function displayBottomSelectionMessage() {
   textSize(height / 20); // Adjust text size as needed
   text(selectedBottomItemName, width / 2, height / 2);
 
-  // Check if 5 seconds have passed
+  // Check if 2 seconds have passed
   if (millis() - selectionMessageStartTime >= messageDuration) {
     showBottomSelectionMessage = false;
     background(247, 215, 233);
@@ -370,7 +362,7 @@ function displayDressSelectionMessage() { // Function for dress selection messag
   textSize(height / 20); // Adjust text size as needed
   text(selectedDressItemName, width / 2, height / 2);
 
-  // Check if 5 seconds have passed
+  // Check if 2 seconds have passed
   if (millis() - selectionMessageStartTime >= messageDuration) {
     showDressSelectionMessage = false;
     background(247, 215, 233);
@@ -390,14 +382,14 @@ function displayHairSelectionMessage() {
   textSize(height / 20); // Adjust text size as needed
   text(selectedHairItemName, width / 2, height / 2);
 
-  // Check if 5 seconds have passed
+  // Check if 2 seconds have passed
   if (millis() - selectionMessageStartTime >= messageDuration) {
     showHairSelectionMessage = false;
     gameState = "gameOverLose"; // Transition to "gameOverLose" instead of "done"
   }
 }
 
-function displayShoesSelectionMessage() { // Function for shoes selection message
+function displayShoesSelectionMessage() { 
   fill(0);
   noStroke();
   rect(width / 2, height / 2, width, height);
@@ -471,6 +463,17 @@ function drawButton(cx, cy, label) {
   text(label, cx, cy + 5);
 }
 
+function drawPinkButton(cx, cy, label) {
+  rectMode(CENTER);
+  fill(224, 11, 121); 
+  stroke(237, 154, 197);
+  strokeWeight(2);
+  rect(cx, cy, width * 0.09375, height * 0.0605, 8);
+  fill(255);
+  noStroke();
+  text(label, cx, cy + 5);
+}
+
 function placeLogo(img, w, h) {
   let tries = 0;
   const maxTries = 100;
@@ -526,18 +529,16 @@ function lives() {
 
   let r = height * 0.05;
 
-  // Lives for top or dress selection (starting state, 4 lives)
-  if (gameState === "puttingOnTop" || gameState === "puttingOnDress") {
+  if (gameState === "puttingOnTop") {
     ellipse(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.006, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
-  // Lives for bottoms selection (3 lives remaining)
-  if (gameState === "puttingOnBottoms") {
+  if (gameState === "puttingOnBottoms" || gameState === "puttingOnDress") {
     noStroke()
-    fill(247, 215, 233); // Clear the leftmost circle
+    fill(247, 215, 233); 
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     stroke(255);
     strokeWeight(5);
@@ -548,10 +549,9 @@ function lives() {
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
-  // Lives for shoes selection (2 lives remaining)
   if (gameState === "puttingOnShoes") {
     noStroke()
-    fill(247, 215, 233); // Clear the two leftmost circles
+    fill(247, 215, 233); 
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     rect(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r)
     stroke(255);
@@ -562,10 +562,9 @@ function lives() {
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
-  // Lives for hair selection (1 life remaining)
   if (gameState === "puttingOnHair") {
     noStroke()
-    fill(247, 215, 233); // Clear the three leftmost circles
+    fill(247, 215, 233); 
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     rect(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r)
     rect(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
@@ -600,7 +599,7 @@ function showResponse() {
 
   if (gameState === "puttingOnDress") {
     lives();
-    closet(dressArray1, dressArray2); // Use dress arrays
+    closet(dressArray1, dressArray2); 
     text("Pick a dress for the " + chosenEvent + " 👗", width / 2, height * 0.15);
     text("Click 'Done' when you're happy!", width / 2, height * 0.21);
   } else if (gameState === "puttingOnTop") {
@@ -615,7 +614,7 @@ function showResponse() {
     text("Then click 'Done' to pick shoes!", width / 2, height * 0.21);
   } else if (gameState === "puttingOnShoes") {
     lives();
-    closet(shoesArray1, shoesArray2); // Pass shoes arrays to closet
+    closet(shoesArray1, shoesArray2); 
     text("Time to pick some fab shoes 👠", width / 2, height * 0.15);
     text("Then click 'Done' to style hair 💇‍♀️", width / 2, height * 0.21);
   } else if (gameState === "puttingOnHair") {
@@ -664,8 +663,6 @@ function nextStage() {
     gameState = "showingHairSelectionMessage";
     selectionMessageStartTime = millis();
   } else {
-    // Optionally, give a hint to the player if no item is selected
-    // For now, it will just not change state if nothing is selected
   }
 }
 
@@ -689,20 +686,18 @@ function closet(array1, array2) {
   if (gameState === "puttingOnDress") {
     for (let i = 0; i < array1.length; i++) {
       if (array1[i] && array1[i].img) {
-        // Apply different dimensions for dresses (taller and slightly wider)
         image(array1[i].img, width / 9, (2 * startY) + (2 * (spacing * i)), width / 9, defaultItemHeight * 1.7);
       }
     }
 
     for (let i = 0; i < array2.length; i++) {
       if (array2[i] && array2[i].img) {
-        // Apply different dimensions for dresses
         image(array2[i].img, width - width / 9, (2 * startY) + (2 * (spacing * i)), width / 9, defaultItemHeight * 1.5);
       }
     }
   } else if (gameState === "puttingOnShoes") { // Condition for shoes
-    let shoeWidth = width / 22; // Example: narrower for shoes
-    let shoeHeight = height / 5; // Example: shorter for shoes
+    let shoeWidth = width / 22; 
+    let shoeHeight = height / 5; 
     for (let i = 0; i < array1.length; i++) {
       if (array1[i] && array1[i].img) {
         image(array1[i].img, width / 9, startY + (1.8*(spacing * i)), shoeWidth, shoeHeight);
@@ -760,8 +755,8 @@ function mousePressed() {
     }
   }
 
-  // barbie world clicks
-  // done button specifics
+  // Barbie world clicks
+  // Done button specifics
   const btnX = width / 3;
   const btnY = height - height / 8;
   const btnW = width * 0.052;
@@ -777,11 +772,28 @@ function mousePressed() {
     !showHairSelectionMessage &&
     !showBottomSelectionMessage &&
     !showDressSelectionMessage &&
-    !showShoesSelectionMessage && // Don't allow clicks during shoes message display
+    !showShoesSelectionMessage && // Don't allow clicks during message display
     gameState !== "gameOverLose"
   ) {
     nextStage();
     return;
+  }
+
+ // Define the dimensions for the restart button 
+  const restartBtnX = width / 8;
+  const restartBtnY = height / 16;
+  const restartBtnW = width * 0.09375; // From drawButton function
+  const restartBtnH = height * 0.0605; // From drawButton function
+
+  if (
+    restartOption == true &&
+    mouseX > restartBtnX - restartBtnW / 2 &&
+    mouseX < restartBtnX + restartBtnW / 2 &&
+    mouseY > restartBtnY - restartBtnH / 2 &&
+    mouseY < restartBtnY + restartBtnH / 2
+  ) {
+    console.log('Got here!');
+    resetGame();
   }
 
   // Outfit choice buttons
@@ -814,7 +826,6 @@ function mousePressed() {
   ) {
     playerChoice = "Top & Bottoms";
     gameState = "puttingOnTop";
-    // Clear selected dress if switching to top & bottoms
     selectedDressImage = null;
 
     fill(247, 215, 233);
@@ -822,21 +833,18 @@ function mousePressed() {
     rect((3 * width) / 4, height / 2, width * 0.104, height * 0.072);
   }
 
-  let defaultItemHeight = height / 6; // Base height for items in the closet
+  let defaultItemHeight = height / 6; // Base height for items in closet
   let spacing = height * 0.145;
-  startY = height / 2 - height / 3.5; // Re-define startY for item positioning
+  startY = height / 2 - height / 3.5; 
 
   // Logic for selecting dresses when in "puttingOnDress" state
   if (gameState === "puttingOnDress") {
-    // Define the dimensions for click detection, matching the display dimensions
     let dressClickWidth = width / 9;
     let dressClickHeight = defaultItemHeight * 1.5;
 
     // Check for clicks on dresses in the left array (dressArray1)
     for (let i = 0; i < dressArray1.length; i++) {
       let currentDress = dressArray1[i];
-      // Note: The Y-coordinate for drawing dresses in `closet` is `(2*startY) + (2*(spacing * i))`
-      // So we use the same for click detection
       let currentDressX = width / 9;
       let currentDressY = (2 * startY) + (2 * (spacing * i));
 
@@ -890,7 +898,7 @@ function mousePressed() {
     for (let i = 0; i < topsArray1.length; i++) {
       let currentTop = topsArray1[i];
       let currentTopX = width / 9;
-      let currentTopY = startY + spacing * i; // Matches drawing Y
+      let currentTopY = startY + spacing * i; 
 
       if (
         mouseX > currentTopX - topClickWidth / 2 &&
@@ -912,7 +920,7 @@ function mousePressed() {
     for (let i = 0; i < topsArray2.length; i++) {
       let currentTop = topsArray2[i];
       let currentTopX = width - width / 9;
-      let currentTopY = startY + spacing * i; // Matches drawing Y
+      let currentTopY = startY + spacing * i; 
 
       if (
         mouseX > currentTopX - topClickWidth / 2 &&
@@ -933,7 +941,6 @@ function mousePressed() {
 
   // Logic for selecting bottoms when in "puttingOnBottoms" state
   if (gameState === "puttingOnBottoms") {
-    // Dimensions for click detection for bottoms (default)
     let bottomClickWidth = width / 9;
     let bottomClickHeight = defaultItemHeight;
 
@@ -941,7 +948,7 @@ function mousePressed() {
     for (let i = 0; i < bottomsArray1.length; i++) {
       let currentBottom = bottomsArray1[i];
       let currentBottomX = width / 9;
-      let currentBottomY = startY + spacing * i; // Matches drawing Y
+      let currentBottomY = startY + spacing * i; 
 
       if (
         mouseX > currentBottomX - bottomClickWidth / 2 &&
@@ -963,7 +970,7 @@ function mousePressed() {
     for (let i = 0; i < bottomsArray2.length; i++) {
       let currentBottom = bottomsArray2[i];
       let currentBottomX = width - width / 9;
-      let currentBottomY = startY + spacing * i; // Matches drawing Y
+      let currentBottomY = startY + spacing * i;
 
       if (
         mouseX > currentBottomX - bottomClickWidth / 2 &&
@@ -984,8 +991,8 @@ function mousePressed() {
 
   // Logic for selecting shoes when in "puttingOnShoes" state
   if (gameState === "puttingOnShoes") {
-  let shoeClickWidth = width / 22; // Matches display width
-  let shoeClickHeight = height / 5; // Matches display height
+  let shoeClickWidth = width / 22; 
+  let shoeClickHeight = height / 5; 
 
   // Check for clicks on shoes in the left array (shoesArray1)
   for (let i = 0; i < shoesArray1.length; i++) {
@@ -1036,7 +1043,6 @@ function mousePressed() {
 
   // Logic for selecting hair when in "puttingOnHair" state
   if (gameState === "puttingOnHair") {
-    // Dimensions for click detection for hair (default)
     let hairClickWidth = width / 9;
     let hairClickHeight = defaultItemHeight;
 
@@ -1064,7 +1070,7 @@ function mousePressed() {
     for (let i = 0; i < hairArray2.length; i++) {
       let currentHair = hairArray2[i];
       let currentHairX = width - width / 9;
-      let currentHairY = startY + spacing * i; // Matches drawing Y
+      let currentHairY = startY + spacing * i; 
 
       if (
         mouseX > currentHairX - hairClickWidth / 2 &&
@@ -1084,6 +1090,51 @@ function mousePressed() {
   }
 }
 
+function resetGame(){
+  // Set the game state back to the very beginning
+  gameState = "introPrompt"; 
+
+  // Clear any selected clothing items
+  selectedTopImage = null;
+  selectedHairImage = null;
+  selectedDressImage = null; 
+  selectedBottomImage = null;
+  selectedShoesImage = null;
+  selectedClothes = null; 
+
+  // Reset messages and their timings
+  showTopSelectionMessage = false;
+  showHairSelectionMessage = false;
+  showBottomSelectionMessage = false;
+  showDressSelectionMessage = false; 
+  showShoesSelectionMessage = false;
+  selectionMessageStartTime = 0; 
+
+  // Clear names of selected items
+  selectedTopItemName = ""; 
+  selectedHairItemName = ""; 
+  selectedBottomItemName = ""; 
+  selectedDressItemName = ""; 
+  selectedShoeItemName = "";
+
+  // Pick a new random event for the next game
+  chosenEvent = random(eventList);
+  playerChoice = ""; 
+
+  // Reset variables related to the background animation (Barbie logos)
+  barbieCount = 0;
+  allLogoPositions = [];
+  
+  // Clear and reset the rules display variables
+  activeRules = []; 
+  rulesIndex = 0;   
+
+  // Finally, clear the screen to ensure a fresh start visually
+  background(247, 215, 233); 
+}
+
+
+//To make the game run on an iphone
 function touchStarted() {
   mousePressed();  
   return false;    // prevents default scrolling on touch
