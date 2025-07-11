@@ -1084,6 +1084,11 @@ function mousePressed() {
   }
 }
 
+function touchStarted() {
+  mousePressed();  
+  return false;    // prevents default scrolling on touch
+}
+
 
 function inside(px, py, rectX, rectY, rectWidth, rectHeight) {
   return px > rectX - rectWidth / 2 &&
