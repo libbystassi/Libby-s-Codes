@@ -1,5 +1,3 @@
-//restart button
-//fix hair using phone - crop them all the same then fix dimensions according to crop. curly hair crop rn looks best
 
 let startY;
 let itemHeight;
@@ -122,7 +120,7 @@ function preload() {
     { img: loadImage('top2.png'), name: "Too much collarbone. Minus one life. 3 lives remaining." },
     { img: loadImage('top3.png'), name: "Too immature. Minus one life. 3 lives remaining." },
     { img: loadImage('top4.png'), name: "Red is suggestive. Minus one life. 3 lives remaining." },
-    { img: loadImage('top5.png'), name: "Green doesn't stand out. Minus one life. 6 lives remaining." },
+    { img: loadImage('top5.png'), name: "Green doesn't stand out. Minus one life. 3 lives remaining." },
     { img: loadImage('top6.png'), name: "Too much cleavage. Minus one life. 3 lives remaining." },
     { img: loadImage('top7.png'), name: "A tube top is not ladylike. Minus one life. 3 lives remaining." },
     { img: loadImage('top8.png'), name: "Not covered enough. Minus one life. 3 lives remaining." },
