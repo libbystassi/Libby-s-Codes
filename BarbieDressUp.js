@@ -1,31 +1,34 @@
-//move done button, make pink rectangle appear over whole outfit for hair
+
+//go thru comments to check
 
 let startY;
-let itemHeight;
+let itemHeight; // This is a general itemHeight. Specific items might have different display heights.
 
 let gameState = "introPrompt";
 let selectedTopImage = null;
 let selectedHairImage = null;
-let selectedBottomImage = null; // NEW: For selected bottom image
+let selectedDressImage = null; // Variable for the selected dress image
+let selectedBottomImage = null;
+let selectedShoesImage = null;
 
 let selectedClothes = null;
-
-let selectedItem; // This variable seems unused currently, you might want to remove it if not needed
 
 // New variables for the selection message
 let showTopSelectionMessage = false;
 let showHairSelectionMessage = false;
-let showBottomSelectionMessage = false; // NEW: For bottom selection message
-
+let showBottomSelectionMessage = false;
+let showDressSelectionMessage = false; 
+let showShoesSelectionMessage = false
+// Variable for dress selection message
 
 let selectionMessageStartTime = 0;
-let messageDuration = 2000; // 2 seconds in milliseconds (was 5 seconds in your comment, but 2000ms in code)
-
+let messageDuration = 2000; 
 
 let selectedTopItemName = ""; // To store the name of the selected top
 let selectedHairItemName = ""; // To store the name of the selected top
-let selectedBottomItemName = ""; // NEW: To store the name of the selected bottom
-
+let selectedBottomItemName = ""; // To store the name of the selected bottom
+let selectedDressItemName = ""; // To store the name of the selected dress
+let selectedShoeItemName = "";
 
 const eventList = [
   "Garden Party",
@@ -50,14 +53,16 @@ let minDistance;
 // Instead of individual image variables, use an array of objects
 let topsData = [];
 let hairData = [];
-let bottomData = []; // NEW: For bottom data
+let bottomData = [];
+let dressData = []; // Array to hold dress data
+let shoesData = []; // Data for shoes
 
-let dressArray1 = [];
-let dressArray2 = [];
+let dressArray1 = []; // Will hold objects with img and name for dresses
+let dressArray2 = []; // Will hold objects with img and name for dresses
 let topsArray1 = []; // Will hold objects with img and name
 let topsArray2 = []; // Will hold objects with img and name
-let bottomsArray1 = []; // NEW: Will hold objects with img and name
-let bottomsArray2 = []; // NEW: Will hold objects with img and name
+let bottomsArray1 = []; // Will hold objects with img and name
+let bottomsArray2 = []; // Will hold objects with img and name
 let shoesArray1 = [];
 let shoesArray2 = [];
 let hairArray1 = [];
@@ -116,7 +121,7 @@ function preload() {
   topsData = [
     { img: loadImage('top1.png'), name: "Too extravagant. Minus one life. 3 lives remaining." },
     { img: loadImage('top2.png'), name: "Too much collarbone. Minus one life. 3 lives remaining." },
-    { img: loadImage('top3.png'), name: "Too juvenile. Minus one life. 3 lives remaining." },
+    { img: loadImage('top3.png'), name: "Too immature. Minus one life. 3 lives remaining." },
     { img: loadImage('top4.png'), name: "Red is suggestive. Minus one life. 3 lives remaining." },
     { img: loadImage('top5.png'), name: "Green doesn't stand out. Minus one life. 6 lives remaining." },
     { img: loadImage('top6.png'), name: "Too much cleavage. Minus one life. 3 lives remaining." },
@@ -133,23 +138,42 @@ function preload() {
     { img: loadImage('hair4.png'), name: "Too immature. Minus one life. 0 lives remaining." },
     { img: loadImage('hair5.png'), name: "Not attractive. Minus one life. 0 lives remaining." },
     { img: loadImage('hair6.png'), name: "Looks young. Minus one life. 0 lives remaining." },
-    { img: loadImage('hair7.png'), name: "Boring is not ladylike. Minus one life. 0 lives remaining." },
+    { img: loadImage('hair7.png'), name: "Too boring. Minus one life. 0 lives remaining." },
     { img: loadImage('hair8.png'), name: "Too frizzy. Minus one life. 0 lives remaining." },
     { img: loadImage('hair9.png'), name: "Too flat. Minus one life. 0 lives remaining." },
     { img: loadImage('hair10.png'), name: "Too short. Minus one life. 0 lives remaining." }
   ];
 
-  bottomData = [ // NEW: Load bottoms and store them with names in bottomData
+  bottomData = [
     { img: loadImage('bottom1.png'), name: "Too bland. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom2.png'), name: "Too tight. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom3.png'), name: "Too short. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom4.png'), name: "Too low. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom5.png'), name: "Too girly. Minus one life. 2 lives remaining." },
-    { img: loadImage('bottom6.png'), name: "Too dreary. Minus one life. 2 lives remaining." },
+    { img: loadImage('bottom6.png'), name: "Too dark. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom7.png'), name: "Too suggestive. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom8.png'), name: "Too immature. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom9.png'), name: "Too modest. Minus one life. 2 lives remaining." },
     { img: loadImage('bottom10.png'), name: "Too attention-seeking. Minus one life. 2 lives remaining." }
+  ];
+
+  // Load dresses and store them with names in dressData
+  dressData = [
+    { img: loadImage('dress1.png'), name: "Too bland. Minus one life. 2 lives remaining." },
+    { img: loadImage('dress2.png'), name: "Too tight. Minus one life. 2 lives remaining." },
+    { img: loadImage('dress3.png'), name: "Too short. Minus one life. 2 lives remaining." },
+    { img: loadImage('dress4.png'), name: "Too low. Minus one life. 2 lives remaining." },
+    // Add more dresses as needed
+  ];
+
+  // Load shoes data 
+  shoesData = [
+    { img: loadImage('shoes1.png'), name: "Too high. Minus one life. 1 life remaining." },
+    { img: loadImage('shoes2.png'), name: "Too flashy. Minus one life. 1 life remaining." },
+    { img: loadImage('shoes3.png'), name: "Too flat. Minus one life. 1 life remaining." },
+    { img: loadImage('shoes4.png'), name: "Too casual. Minus one life. 1 life remaining." },
+    { img: loadImage('shoes5.png'), name: "Too boring. Minus one life. 1 life remaining." },
+    { img: loadImage('shoes6.png'), name: "Too basic. Minus one life. 1 life remaining." },
   ];
 }
 
@@ -161,9 +185,16 @@ function setup() {
   hairArray1 = hairData.slice(0, 5);
   hairArray2 = hairData.slice(5, 10);
 
-  bottomsArray1 = bottomData.slice(0, 5); // NEW: Populate bottomsArray1
-  bottomsArray2 = bottomData.slice(5, 10); // NEW: Populate bottomsArray2
+  bottomsArray1 = bottomData.slice(0, 5);
+  bottomsArray2 = bottomData.slice(5, 10);
 
+  // Populate dressArray1 and dressArray2 from dressData
+  dressArray1 = dressData.slice(0, Math.ceil(dressData.length / 2));
+  dressArray2 = dressData.slice(Math.ceil(dressData.length / 2));
+
+  // Populate shoesArray1 and shoesArray2 from shoesData
+  shoesArray1 = shoesData.slice(0, 3);
+  shoesArray2 = shoesData.slice(3, 6);
 
   createCanvas(windowWidth, windowHeight);
   background(247, 215, 233);
@@ -181,28 +212,38 @@ function windowResized() {
 }
 
 function draw() {
-  let itemHeight = height / 6.5;
+  itemHeight = height / 6.5; // Re-define itemHeight for general use in draw
 
   // Handle the selection message states first, and the new game over state
   if (gameState === "showingTopSelectionMessage") {
     displayTopSelectionMessage();
-    return; // Stop drawing other elements while the message is displayed
+    return;
   }
 
   if (gameState === "showingHairSelectionMessage") {
     displayHairSelectionMessage();
-    return; // Stop drawing other elements while the message is displayed
+    return;
   }
 
-  if (gameState === "showingBottomSelectionMessage") { // NEW: Handle bottom selection message
+  if (gameState === "showingBottomSelectionMessage") {
     displayBottomSelectionMessage();
-    return; // Stop drawing other elements while the message is displayed
+    return;
   }
 
-  // --- NEW: Handle the game over state ---
+  if (gameState === "showingDressSelectionMessage") {
+    displayDressSelectionMessage();
+    return;
+  }
+
+  if (gameState === "showingShoesSelectionMessage") {
+    displayShoesSelectionMessage();
+    return;
+  }
+
+  // --- Handle the game over state ---
   if (gameState === "gameOverLose") {
     background(0); // Black background
-    fill(255);       // White text
+    fill(255);      // White text
     textSize(height / 15);
     text("YOU LOSE!", width / 2, height / 2);
     return; // Stop drawing anything else
@@ -215,32 +256,7 @@ function draw() {
     return; // Stop drawing the rest of the scene if in intro flow
   }
 
-  // DRAW THE SELECTED TOP IMAGE ON THE MODEL (ONLY if not in the hair or bottom phase)
-  // This is the ONLY place selectedTopImage should be drawn.
-  if (selectedTopImage !== null && gameState !== "puttingOnHair") {
-    image(selectedTopImage, width / 2, height / 2.2, width / 10, itemHeight);
-  }
-
-//right here 
-  // Draw the selected bottom image on the model
-  if (selectedBottomImage !== null && gameState !== "puttingOnHair") { // NEW: Draw selected bottom
-    image(selectedBottomImage, width / 2, height / 1.53, width / 6.4, itemHeight * 1.8); // Adjust position and size as needed
-  }
-
-  // Draw the selected hair image on the model
-  if (selectedHairImage !== null) {
-    image(selectedHairImage, width / 2, height / 1.7, width / 4, itemHeight * 3);
-  }
-
-
-  // If not in intro flow and no specific clothes are being 'put on', draw the model.
-  // The model is drawn here so the chosen top and bottom can appear on top of it.
-  if (selectedClothes == null || gameState === "start") {
-    image(model, width / 2, height / 2 + height * 0.085, width * 0.21, height * 0.6);
-  }
-
-
-  // Barbie logo animation in the background
+  // Barbie logo animation in the background (moved up so it's always behind)
   if (barbieCount === 0 || barbieCount === 200) {
     background(247, 215, 233);
     allLogoPositions = [];
@@ -253,6 +269,41 @@ function draw() {
     placeLogo(barbie3, width * 0.078, height * 0.121);
   }
   barbieCount++;
+
+  // *** MODIFIED LOGIC FOR MODEL AND CLOTHING DISPLAY ***
+
+  // Only draw the model if in the "start" state (before any clothes are picked)
+  if (gameState === "start") {
+    image(model, width / 2, height / 2 + height * 0.085, width * 0.21, height * 0.6);
+  }
+
+  // Draw the selected dress if it's not null (regardless of other items)
+  if (selectedDressImage !== null) {
+    // Adjust these coordinates and dimensions to fit the dress in the model's position
+    image(selectedDressImage, width / 2, 1.9*(height / 3), width * 0.15, height * 0.36);
+  }
+
+  // Draw selected top and bottom only if a dress hasn't been selected
+  if (selectedDressImage === null) {
+    if (selectedTopImage !== null) {
+      image(selectedTopImage, width / 2, height / 1.84, width / 10, itemHeight);
+    }
+
+    if (selectedBottomImage !== null) {
+      image(selectedBottomImage, width / 2, height / 1.37, width / 6.4, itemHeight * 1.8);
+    }
+  }
+
+  // Draw selected shoes and hair (these should always appear if selected)
+  if (selectedShoesImage !== null) {
+    image(selectedShoesImage, width / 2, height / 1.14, width / 23, height / 9);
+  }
+
+  if (selectedHairImage !== null) {
+    image(selectedHairImage, width / 2, height / 2.3, width / 13, itemHeight);
+  }
+
+  // *** END MODIFIED LOGIC ***
 
   // Pink rectangle at the top
   stroke(227, 20, 131);
@@ -289,7 +340,7 @@ function displayTopSelectionMessage() {
   }
 }
 
-function displayBottomSelectionMessage() { // NEW: Function for bottom selection message
+function displayBottomSelectionMessage() {
   // Draw the black rectangle covering the whole window
   fill(0);
   noStroke();
@@ -308,6 +359,25 @@ function displayBottomSelectionMessage() { // NEW: Function for bottom selection
   }
 }
 
+function displayDressSelectionMessage() { // Function for dress selection message
+  // Draw the black rectangle covering the whole window
+  fill(0);
+  noStroke();
+  rect(width / 2, height / 2, width, height);
+
+  // Draw the white text
+  fill(255);
+  textSize(height / 20); // Adjust text size as needed
+  text(selectedDressItemName, width / 2, height / 2);
+
+  // Check if 5 seconds have passed
+  if (millis() - selectionMessageStartTime >= messageDuration) {
+    showDressSelectionMessage = false;
+    background(247, 215, 233);
+    gameState = "puttingOnShoes"; // Transition to shoes after dress message
+  }
+}
+
 
 function displayHairSelectionMessage() {
   // Draw the black rectangle covering the whole window
@@ -323,11 +393,25 @@ function displayHairSelectionMessage() {
   // Check if 5 seconds have passed
   if (millis() - selectionMessageStartTime >= messageDuration) {
     showHairSelectionMessage = false;
-    // --- MODIFIED: Transition to "gameOverLose" instead of "done" ---
-    gameState = "gameOverLose";
-    // --- END MODIFICATION ---
+    gameState = "gameOverLose"; // Transition to "gameOverLose" instead of "done"
   }
 }
+
+function displayShoesSelectionMessage() { // Function for shoes selection message
+  fill(0);
+  noStroke();
+  rect(width / 2, height / 2, width, height);
+  fill(255);
+  textSize(height / 20);
+  text(selectedShoesItemName, width / 2, height / 2);
+
+  if (millis() - selectionMessageStartTime >= messageDuration) {
+    showShoesSelectionMessage = false;
+    background(247, 215, 233);
+    gameState = "puttingOnHair"; // Transition to hair after shoes message
+  }
+}
+
 
 function runIntroFlow() {
   background(0);
@@ -442,45 +526,46 @@ function lives() {
 
   let r = height * 0.05;
 
-  if (gameState === "puttingOnTop") {
+  // Lives for top or dress selection (starting state, 4 lives)
+  if (gameState === "puttingOnTop" || gameState === "puttingOnDress") {
     ellipse(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.006, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
-  if (gameState === "puttingOnDress" || gameState === "puttingOnBottoms") {
+  // Lives for bottoms selection (3 lives remaining)
+  if (gameState === "puttingOnBottoms") {
     noStroke()
-    fill(247, 215, 233);
+    fill(247, 215, 233); // Clear the leftmost circle
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     stroke(255);
     strokeWeight(5);
     fill(255, 20, 147);
     fill(242, 138, 193)
-    //ellipse(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.006, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
+  // Lives for shoes selection (2 lives remaining)
   if (gameState === "puttingOnShoes") {
     noStroke()
-    fill(247, 215, 233);
+    fill(247, 215, 233); // Clear the two leftmost circles
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     rect(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r)
     stroke(255);
     strokeWeight(5);
     fill(255, 20, 147);
     fill(242, 138, 193)
-    //ellipse(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
-    //ellipse(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.006, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
+  // Lives for hair selection (1 life remaining)
   if (gameState === "puttingOnHair") {
     noStroke()
-    fill(247, 215, 233);
+    fill(247, 215, 233); // Clear the three leftmost circles
     rect(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
     rect(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r)
     rect(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
@@ -488,10 +573,7 @@ function lives() {
     strokeWeight(5);
     fill(255, 20, 147);
     fill(186, 4, 25)
-    //ellipse(width - width / 9 - width * 0.060, height / 8 - height * 0.034, r, r);
-    //ellipse(width - width / 9 + width * 0.021, height / 8 - height * 0.034, r, r);
     ellipse(width - width / 9 - width * 0.006, height / 8 - height * 0.034, r, r);
-    //ellipse(width - width / 9 - width * 0.033, height / 8 - height * 0.034, r, r);
   }
 
 }
@@ -510,7 +592,6 @@ function showOutfitButtons() {
   text("Top & Bottoms", (3 * width) / 4, height / 2 + height * 0.012);
 }
 
-
 function showResponse() {
   fill(255, 20, 147);
   noStroke();
@@ -519,22 +600,22 @@ function showResponse() {
 
   if (gameState === "puttingOnDress") {
     lives();
-    closet(dressArray1, dressArray2);
+    closet(dressArray1, dressArray2); // Use dress arrays
     text("Pick a dress for the " + chosenEvent + " 👗", width / 2, height * 0.15);
     text("Click 'Done' when you're happy!", width / 2, height * 0.21);
   } else if (gameState === "puttingOnTop") {
     lives();
-    closet(topsArray1, topsArray2); // Use topsArray1 and topsArray2
+    closet(topsArray1, topsArray2);
     text("Pick a cute top for the " + chosenEvent + " 💫", width / 2, height * 0.15);
     text("Then click 'Done' to add bottoms!", width / 2, height * 0.21);
   } else if (gameState === "puttingOnBottoms") {
     lives();
-    closet(bottomsArray1, bottomsArray2); // NEW: Use bottomsArray1 and bottomsArray2
+    closet(bottomsArray1, bottomsArray2);
     text("Great top! Now pick matching bottoms 👖", width / 2, height * 0.15);
     text("Then click 'Done' to pick shoes!", width / 2, height * 0.21);
   } else if (gameState === "puttingOnShoes") {
     lives();
-    closet(shoesArray1, shoesArray2);
+    closet(shoesArray1, shoesArray2); // Pass shoes arrays to closet
     text("Time to pick some fab shoes 👠", width / 2, height * 0.15);
     text("Then click 'Done' to style hair 💇‍♀️", width / 2, height * 0.21);
   } else if (gameState === "puttingOnHair") {
@@ -543,13 +624,9 @@ function showResponse() {
     text("Hair time! What style screams Barbie? 💁‍♀️", width / 2, height * 0.15);
     text("Click 'Done' to finish!", width / 2, height * 0.21);
   } else if (gameState === "done") {
-    // This 'done' state will now typically only be reached if your game logic
-    // for losing lives is changed, or if you introduce a "win" condition.
-    // As per your latest request, after hair, it leads to "gameOverLose".
-    lives(); // Still call lives, though they might all be "lost" or not drawn
+    lives();
     text("I'm all set for the " + chosenEvent + "! 💖", width / 2, height * 0.17);
     text("Thanks for the help", width / 2, height * 0.22);
-    // This is where you would list reasons for losing if you didn't end on a separate "YOU LOSE!" screen
   }
 }
 
@@ -563,11 +640,35 @@ function showDoneButton() {
   ) {
     fill(247, 228, 238);
     strokeWeight(2);
-    rect(width / 2, height - height / 8, width * 0.052, height * 0.048); // 100x40 on 1920x827
+    rect(width / 3, height - height / 8, width * 0.052, height * 0.048);
     fill(242, 138, 193);
-    text('Done', width / 2, height - height / 8);
+    text('Done', width / 3, height - height / 8);
   }
 }
+
+function nextStage() {
+  // Check if a dress was selected, if not, check if a top was selected
+  if (gameState === "puttingOnDress" && selectedDressImage !== null) {
+    gameState = "showingDressSelectionMessage";
+    selectionMessageStartTime = millis();
+  } else if (gameState === "puttingOnTop" && selectedTopImage !== null) {
+    gameState = "showingTopSelectionMessage";
+    selectionMessageStartTime = millis();
+  } else if (gameState === "puttingOnBottoms" && selectedBottomImage !== null) {
+    gameState = "showingBottomSelectionMessage";
+    selectionMessageStartTime = millis();
+  } else if (gameState === "puttingOnShoes" && selectedShoesImage !== null) {
+    gameState = "showingShoesSelectionMessage";
+    selectionMessageStartTime = millis();
+  } else if (gameState === "puttingOnHair" && selectedHairImage !== null) {
+    gameState = "showingHairSelectionMessage";
+    selectionMessageStartTime = millis();
+  } else {
+    // Optionally, give a hint to the player if no item is selected
+    // For now, it will just not change state if nothing is selected
+  }
+}
+
 
 function closet(array1, array2) {
   fill(250, 212, 235);
@@ -580,65 +681,91 @@ function closet(array1, array2) {
   strokeWeight(5);
   rect(width - width / 9, height / 2, width / 6, height - height / 4);
 
-  let itemHeight = height / 6;
+  let defaultItemHeight = height / 6; // Base height for most items
   let spacing = height * 0.145;
+  startY = height / 2 - height / 3.5;
 
-  // Loop through objects to draw images
-  for (var i = 0; i < array1.length; i++) {
-    // Check if the array contains objects (like topsArray1/2, bottomsArray1/2, hairArray1/2) or just images
-    if (array1[i].img) {
-      image(array1[i].img, width / 9, startY + (spacing * i), width / 9, itemHeight);
-    } else {
-      image(array1[i], width / 9, startY + (spacing * i), width / 9, itemHeight);
+  // Check if the current items are dresses
+  if (gameState === "puttingOnDress") {
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] && array1[i].img) {
+        // Apply different dimensions for dresses (taller and slightly wider)
+        image(array1[i].img, width / 9, (2 * startY) + (2 * (spacing * i)), width / 9, defaultItemHeight * 1.7);
+      }
     }
-  }
 
-  for (var i = 0; i < array2.length; i++) {
-    // Check if the array contains objects (like topsArray1/2, bottomsArray1/2, hairArray1/2) or just images
-    if (array2[i].img) {
-      image(array2[i].img, width - width / 9, startY + (spacing * i), width / 9, itemHeight);
-    } else {
-      image(array2[i], width - width / 9, startY + (spacing * i), width / 9, itemHeight);
+    for (let i = 0; i < array2.length; i++) {
+      if (array2[i] && array2[i].img) {
+        // Apply different dimensions for dresses
+        image(array2[i].img, width - width / 9, (2 * startY) + (2 * (spacing * i)), width / 9, defaultItemHeight * 1.5);
+      }
+    }
+  } else if (gameState === "puttingOnShoes") { // Condition for shoes
+    let shoeWidth = width / 22; // Example: narrower for shoes
+    let shoeHeight = height / 5; // Example: shorter for shoes
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] && array1[i].img) {
+        image(array1[i].img, width / 9, startY + (1.8*(spacing * i)), shoeWidth, shoeHeight);
+      }
+    }
+    for (let i = 0; i < array2.length; i++) {
+      if (array2[i] && array2[i].img) {
+        image(array2[i].img, width - width / 9, startY + (1.8*(spacing * i)), shoeWidth, shoeHeight);
+      }
+    }
+  } else {
+    // Default dimensions for tops, bottoms, and hair
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] && array1[i].img) {
+        image(array1[i].img, width / 9, startY + (spacing * i), width / 9, defaultItemHeight);
+      }
+    }
+
+    for (let i = 0; i < array2.length; i++) {
+      if (array2[i] && array2[i].img) {
+        image(array2[i].img, width - width / 9, startY + (spacing * i), width / 9, defaultItemHeight);
+      }
     }
   }
 }
 
+
 function mousePressed() {
   // intro clicks
   if (gameState === "introPrompt") {
-    if (inside(mouseX, mouseY, width / 2 - width * 0.0625, height * 0.6)) {
+    if (inside(mouseX, mouseY, width / 2 - width * 0.0625, height * 0.6, width * 0.09375, height * 0.0605)) {
       gameState = "rulesPrompt";
       return;
     }
-    if (inside(mouseX, mouseY, width / 2 + width * 0.0625, height * 0.6)) {
+    if (inside(mouseX, mouseY, width / 2 + width * 0.0625, height * 0.6, width * 0.09375, height * 0.0605)) {
       gameState = "noOption";
       return;
     }
   } else if (gameState === "noOption") {
-    if (inside(mouseX, mouseY, width / 2, height * 0.6)) {
+    if (inside(mouseX, mouseY, width / 2, height * 0.6, width * 0.09375, height * 0.0605)) {
       gameState = "rulesPrompt";
       return;
     }
   } else if (gameState === "rulesPrompt") {
-    if (inside(mouseX, mouseY, width / 2, height * 0.6)) {
+    if (inside(mouseX, mouseY, width / 2, height * 0.6, width * 0.09375, height * 0.0605)) {
       gameState = "showingRules";
       activeRules = [];
       rulesIndex = 0;
       return;
     }
   } else if (gameState === "showingRules") {
-    if (inside(mouseX, mouseY, width / 2, height * 0.9)) {
+    if (inside(mouseX, mouseY, width / 2, height * 0.9, width * 0.09375, height * 0.0605)) {
       gameState = "start";
       return;
-    } // hand off to pink world
+    }
   }
 
   // barbie world clicks
   // done button specifics
-  const btnX = width / 2;
+  const btnX = width / 3;
   const btnY = height - height / 8;
-  const btnW = width * 0.052; // 100px
-  const btnH = height * 0.048; // 40px
+  const btnW = width * 0.052;
+  const btnH = height * 0.048;
 
   // Check for Done button click (only if not in a message state or game over state)
   if (
@@ -646,16 +773,18 @@ function mousePressed() {
     mouseX < btnX + btnW / 2 &&
     mouseY > btnY - btnH / 2 &&
     mouseY < btnY + btnH / 2 &&
-    !showTopSelectionMessage && // Don't allow clicks during message display
-    !showHairSelectionMessage && // Don't allow clicks during message display
-    !showBottomSelectionMessage && // NEW: Don't allow clicks during bottom message display
-    gameState !== "gameOverLose" // Don't allow clicks if game is over
+    !showTopSelectionMessage &&
+    !showHairSelectionMessage &&
+    !showBottomSelectionMessage &&
+    !showDressSelectionMessage &&
+    !showShoesSelectionMessage && // Don't allow clicks during shoes message display
+    gameState !== "gameOverLose"
   ) {
-    nextStage(); // Call nextStage if Done button is clicked
-    return; // Crucial: Stop further mousePressed logic once Done is handled
+    nextStage();
+    return;
   }
 
-
+  // Outfit choice buttons
   if (
     gameState === "start" &&
     mouseX > width / 4 - width * 0.052 &&
@@ -665,9 +794,14 @@ function mousePressed() {
   ) {
     playerChoice = "Dress";
     gameState = "puttingOnDress";
+    // Clear selections from other categories if switching to dress
+    selectedTopImage = null;
+    selectedBottomImage = null;
+    selectedShoesImage = null;
+    selectedHairImage = null;
 
     fill(247, 215, 233);
-    rect(width / 4, height / 2, width * 0.104, height * 0.072); // 200x60
+    rect(width / 4, height / 2, width * 0.104, height * 0.072);
     rect((3 * width) / 4, height / 2, width * 0.104, height * 0.072);
   }
 
@@ -680,210 +814,280 @@ function mousePressed() {
   ) {
     playerChoice = "Top & Bottoms";
     gameState = "puttingOnTop";
+    // Clear selected dress if switching to top & bottoms
+    selectedDressImage = null;
 
     fill(247, 215, 233);
     rect(width / 4, height / 2, width * 0.104, height * 0.072);
     rect((3 * width) / 4, height / 2, width * 0.104, height * 0.072);
   }
 
-  let itemHeight = height / 6;
+  let defaultItemHeight = height / 6; // Base height for items in the closet
   let spacing = height * 0.145;
-  startY = height / 2 - height / 3.5;
+  startY = height / 2 - height / 3.5; // Re-define startY for item positioning
 
-  // Logic for selecting tops when in "puttingOnTop" state
-  if (gameState === "puttingOnTop") {
-    // Check for clicks on tops in the left array (topsArray1 - now array of objects)
-    for (let i = 0; i < topsArray1.length; i++) {
-      let currentTop = topsArray1[i]; // Get the object containing img and name
-      let currentTopX = width / 9;
-      let currentTopY = startY + spacing * i;
-      let currentTopWidth = width / 9;
-      let currentTopHeight = itemHeight;
+  // Logic for selecting dresses when in "puttingOnDress" state
+  if (gameState === "puttingOnDress") {
+    // Define the dimensions for click detection, matching the display dimensions
+    let dressClickWidth = width / 9;
+    let dressClickHeight = defaultItemHeight * 1.5;
+
+    // Check for clicks on dresses in the left array (dressArray1)
+    for (let i = 0; i < dressArray1.length; i++) {
+      let currentDress = dressArray1[i];
+      // Note: The Y-coordinate for drawing dresses in `closet` is `(2*startY) + (2*(spacing * i))`
+      // So we use the same for click detection
+      let currentDressX = width / 9;
+      let currentDressY = (2 * startY) + (2 * (spacing * i));
 
       if (
-        mouseX > currentTopX - currentTopWidth / 2 &&
-        mouseX < currentTopX + currentTopWidth / 2 &&
-        mouseY > currentTopY - currentTopHeight / 2 &&
-        mouseY < currentTopY + currentTopHeight / 2
+        mouseX > currentDressX - dressClickWidth / 2 &&
+        mouseX < currentDressX + dressClickWidth / 2 &&
+        mouseY > currentDressY - dressClickHeight / 2 &&
+        mouseY < currentDressY + dressClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedTopImage = currentTop.img; // Set the selected top image
-        selectedTopItemName = currentTop.name; // Set the name of the selected top
-        selectedClothes = "yay";
-        return; // Exit function after handling click
+        selectedDressImage = currentDress.img;
+        selectedDressItemName = currentDress.name;
+        selectedClothes = "yay"; // Indicate something has been selected
+        return;
       }
     }
 
-    // Check for clicks on tops in the right array (topsArray2 - now array of objects)
-    for (let i = 0; i < topsArray2.length; i++) {
-      let currentTop = topsArray2[i]; // Get the object containing img and name
-      let currentTopX = width - width / 9;
-      let currentTopY = startY + spacing * i;
-      let currentTopWidth = width / 9;
-      let currentTopHeight = itemHeight;
+    // Check for clicks on dresses in the right array (dressArray2)
+    for (let i = 0; i < dressArray2.length; i++) {
+      let currentDress = dressArray2[i];
+      let currentDressX = width - width / 9;
+      let currentDressY = (2 * startY) + (2 * (spacing * i)); // Matches drawing Y
 
       if (
-        mouseX > currentTopX - currentTopWidth / 2 &&
-        mouseX < currentTopX + currentTopWidth / 2 &&
-        mouseY > currentTopY - currentTopHeight / 2 &&
-        mouseY < currentTopY + currentTopHeight / 2
+        mouseX > currentDressX - dressClickWidth / 2 &&
+        mouseX < currentDressX + dressClickWidth / 2 &&
+        mouseY > currentDressY - dressClickHeight / 2 &&
+        mouseY < currentDressY + dressClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedTopImage = currentTop.img; // Set the selected top image
-        selectedTopItemName = currentTop.name; // Set the name of the selected top
-        selectedClothes = "yay";
-        return; // Exit function after handling click
+        selectedDressImage = currentDress.img;
+        selectedDressItemName = currentDress.name;
+        selectedClothes = "yay"; // Indicate something has been selected
+        return;
       }
     }
   }
 
-  // NEW: Logic for selecting bottoms when in "puttingOnBottoms" state
-  if (gameState === "puttingOnBottoms") {
-    // Check for clicks on bottoms in the left array (bottomsArray1)
-    for (let i = 0; i < bottomsArray1.length; i++) {
-      let currentBottom = bottomsArray1[i]; // Get the object containing img and name
-      let currentBottomX = width / 9;
-      let currentBottomY = startY + spacing * i;
-      let currentBottomWidth = width / 9;
-      let currentBottomHeight = itemHeight;
+
+  // Logic for selecting tops when in "puttingOnTop" state
+  if (gameState === "puttingOnTop") {
+    // Dimensions for click detection for tops (default)
+    let topClickWidth = width / 9;
+    let topClickHeight = defaultItemHeight;
+
+    // Check for clicks on tops in the left array (topsArray1)
+    for (let i = 0; i < topsArray1.length; i++) {
+      let currentTop = topsArray1[i];
+      let currentTopX = width / 9;
+      let currentTopY = startY + spacing * i; // Matches drawing Y
 
       if (
-        mouseX > currentBottomX - currentBottomWidth / 2 &&
-        mouseX < currentBottomX + currentBottomWidth / 2 &&
-        mouseY > currentBottomY - currentBottomHeight / 2 &&
-        mouseY < currentBottomY + currentBottomHeight / 2
+        mouseX > currentTopX - topClickWidth / 2 &&
+        mouseX < currentTopX + topClickWidth / 2 &&
+        mouseY > currentTopY - topClickHeight / 2 &&
+        mouseY < currentTopY + topClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedBottomImage = currentBottom.img; // Set the selected bottom image
-        selectedBottomItemName = currentBottom.name; // Set the name of the selected bottom
-        selectedClothes = "yay"; // You might want a different variable for bottom selection status
-        return; // Exit function after handling click
+        selectedTopImage = currentTop.img;
+        selectedTopItemName = currentTop.name;
+        selectedClothes = "yay";
+        return;
+      }
+    }
+
+    // Check for clicks on tops in the right array (topsArray2)
+    for (let i = 0; i < topsArray2.length; i++) {
+      let currentTop = topsArray2[i];
+      let currentTopX = width - width / 9;
+      let currentTopY = startY + spacing * i; // Matches drawing Y
+
+      if (
+        mouseX > currentTopX - topClickWidth / 2 &&
+        mouseX < currentTopX + topClickWidth / 2 &&
+        mouseY > currentTopY - topClickHeight / 2 &&
+        mouseY < currentTopY + topClickHeight / 2
+      ) {
+        noStroke();
+        fill(247, 215, 233);
+        rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
+        selectedTopImage = currentTop.img;
+        selectedTopItemName = currentTop.name;
+        selectedClothes = "yay";
+        return;
+      }
+    }
+  }
+
+  // Logic for selecting bottoms when in "puttingOnBottoms" state
+  if (gameState === "puttingOnBottoms") {
+    // Dimensions for click detection for bottoms (default)
+    let bottomClickWidth = width / 9;
+    let bottomClickHeight = defaultItemHeight;
+
+    // Check for clicks on bottoms in the left array (bottomsArray1)
+    for (let i = 0; i < bottomsArray1.length; i++) {
+      let currentBottom = bottomsArray1[i];
+      let currentBottomX = width / 9;
+      let currentBottomY = startY + spacing * i; // Matches drawing Y
+
+      if (
+        mouseX > currentBottomX - bottomClickWidth / 2 &&
+        mouseX < currentBottomX + bottomClickWidth / 2 &&
+        mouseY > currentBottomY - bottomClickHeight / 2 &&
+        mouseY < currentBottomY + bottomClickHeight / 2
+      ) {
+        noStroke();
+        fill(247, 215, 233);
+        rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
+        selectedBottomImage = currentBottom.img;
+        selectedBottomItemName = currentBottom.name;
+        selectedClothes = "yay";
+        return;
       }
     }
 
     // Check for clicks on bottoms in the right array (bottomsArray2)
     for (let i = 0; i < bottomsArray2.length; i++) {
-      let currentBottom = bottomsArray2[i]; // Get the object containing img and name
+      let currentBottom = bottomsArray2[i];
       let currentBottomX = width - width / 9;
-      let currentBottomY = startY + spacing * i;
-      let currentBottomWidth = width / 9;
-      let currentBottomHeight = itemHeight;
+      let currentBottomY = startY + spacing * i; // Matches drawing Y
 
       if (
-        mouseX > currentBottomX - currentBottomWidth / 2 &&
-        mouseX < currentBottomX + currentBottomWidth / 2 &&
-        mouseY > currentBottomY - currentBottomHeight / 2 &&
-        mouseY < currentBottomY + currentBottomHeight / 2
+        mouseX > currentBottomX - bottomClickWidth / 2 &&
+        mouseX < currentBottomX + bottomClickWidth / 2 &&
+        mouseY > currentBottomY - bottomClickHeight / 2 &&
+        mouseY < currentBottomY + bottomClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedBottomImage = currentBottom.img; // Set the selected bottom image
-        selectedBottomItemName = currentBottom.name; // Set the name of the selected bottom
-        selectedClothes = "yay"; // You might want a different variable for bottom selection status
-        return; // Exit function after handling click
+        selectedBottomImage = currentBottom.img;
+        selectedBottomItemName = currentBottom.name;
+        selectedClothes = "yay";
+        return;
       }
     }
   }
 
+  // Logic for selecting shoes when in "puttingOnShoes" state
+  if (gameState === "puttingOnShoes") {
+  let shoeClickWidth = width / 22; // Matches display width
+  let shoeClickHeight = height / 5; // Matches display height
 
-  // --- LOGIC FOR HAIR SELECTION ---
+  // Check for clicks on shoes in the left array (shoesArray1)
+  for (let i = 0; i < shoesArray1.length; i++) {
+    let currentShoe = shoesArray1[i];
+    // These are the coordinates for displaying the image in closet() for shoes
+    let currentShoeX = width / 9;
+    let currentShoeY = startY + (1.8 * (spacing * i)); 
+
+    if (
+      mouseX > currentShoeX - shoeClickWidth / 2 &&
+      mouseX < currentShoeX + shoeClickWidth / 2 &&
+      mouseY > currentShoeY - shoeClickHeight / 2 &&
+      mouseY < currentShoeY + shoeClickHeight / 2
+    ) {
+      noStroke();
+      fill(247, 215, 233);
+      rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
+      selectedShoesImage = currentShoe.img;
+      selectedShoesItemName = currentShoe.name;
+      selectedClothes = "yay";
+      return;
+    }
+  }
+
+  // Check for clicks on shoes in the right array (shoesArray2)
+  for (let i = 0; i < shoesArray2.length; i++) {
+    let currentShoe = shoesArray2[i];
+    // These are the coordinates for displaying the image in closet() for shoes
+    let currentShoeX = width - width / 9;
+    let currentShoeY = startY + (1.8 * (spacing * i)); 
+
+    if (
+      mouseX > currentShoeX - shoeClickWidth / 2 &&
+      mouseX < currentShoeX + shoeClickWidth / 2 &&
+      mouseY > currentShoeY - shoeClickHeight / 2 &&
+      mouseY < currentShoeY + shoeClickHeight / 2
+    ) {
+      noStroke();
+      fill(247, 215, 233);
+      rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
+      selectedShoesImage = currentShoe.img;
+      selectedShoesItemName = currentShoe.name;
+      selectedClothes = "yay";
+      return;
+    }
+  }
+}
+
+  // Logic for selecting hair when in "puttingOnHair" state
   if (gameState === "puttingOnHair") {
-    // Check for clicks on hair in the left array (hairArray1)
+    // Dimensions for click detection for hair (default)
+    let hairClickWidth = width / 9;
+    let hairClickHeight = defaultItemHeight;
+
     for (let i = 0; i < hairArray1.length; i++) {
-      let currentHair = hairArray1[i]; // Get the object containing img and name
+      let currentHair = hairArray1[i];
       let currentHairX = width / 9;
-      let currentHairY = startY + spacing * i;
-      let currentHairWidth = width / 9;
-      let currentHairHeight = itemHeight;
+      let currentHairY = startY + spacing * i; // Matches drawing Y
 
       if (
-        mouseX > currentHairX - currentHairWidth / 2 &&
-        mouseX < currentHairX + currentHairWidth / 2 &&
-        mouseY > currentHairY - currentHairHeight / 2 &&
-        mouseY < currentHairY + currentHairHeight / 2
+        mouseX > currentHairX - hairClickWidth / 2 &&
+        mouseX < currentHairX + hairClickWidth / 2 &&
+        mouseY > currentHairY - hairClickHeight / 2 &&
+        mouseY < currentHairY + hairClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedHairImage = currentHair.img; // Set the selected hair image
-        selectedHairItemName = currentHair.name; // Set the name of the selected hair
-        selectedClothes = "yay"; // You might want a different variable for hair selection status
-        return; // Exit function after handling click
+        selectedHairImage = currentHair.img;
+        selectedHairItemName = currentHair.name;
+        selectedClothes = "yay";
+        return;
       }
     }
 
-    // Check for clicks on hair in the right array (hairArray2)
     for (let i = 0; i < hairArray2.length; i++) {
-      let currentHair = hairArray2[i]; // Get the object containing img and name
+      let currentHair = hairArray2[i];
       let currentHairX = width - width / 9;
-      let currentHairY = startY + spacing * i;
-      let currentHairWidth = width / 9;
-      let currentHairHeight = itemHeight;
+      let currentHairY = startY + spacing * i; // Matches drawing Y
 
       if (
-        mouseX > currentHairX - currentHairWidth / 2 &&
-        mouseX < currentHairX + currentHairWidth / 2 &&
-        mouseY > currentHairY - currentHairHeight / 2 &&
-        mouseY < currentHairY + currentHairHeight / 2
+        mouseX > currentHairX - hairClickWidth / 2 &&
+        mouseX < currentHairX + hairClickWidth / 2 &&
+        mouseY > currentHairY - hairClickHeight / 2 &&
+        mouseY < currentHairY + hairClickHeight / 2
       ) {
         noStroke();
         fill(247, 215, 233);
         rect(width / 2, height / 2 + height * 0.0965, width * 0.364, height * 0.967);
-        selectedHairImage = currentHair.img; // Set the selected hair image
-        selectedHairItemName = currentHair.name; // Set the name of the selected hair
-        selectedClothes = "yay"; // You might want a different variable for hair selection status
-        return; // Exit function after handling click
+        selectedHairImage = currentHair.img;
+        selectedHairItemName = currentHair.name;
+        selectedClothes = "yay";
+        return;
       }
     }
   }
 }
 
 
-function nextStage() {
-  if (gameState === "puttingOnTop") {
-    // Only proceed if a top has been selected
-    if (selectedTopImage !== null) {
-      showTopSelectionMessage = true;
-      selectionMessageStartTime = millis(); // Record the current time
-      gameState = "showingTopSelectionMessage"; // New state to display the message
-    } else {
-      // Give feedback to the user that they need to select a top
-      console.log("Please select a top first!");
-      // Add an on-screen message here for the user
-    }
-  } else if (gameState === "puttingOnBottoms") { // NEW: Handle next stage from bottoms
-    if (selectedBottomImage !== null) {
-      showBottomSelectionMessage = true;
-      selectionMessageStartTime = millis();
-      gameState = "showingBottomSelectionMessage";
-    } else {
-      console.log("Please select a bottom first!");
-      // Add an on-screen message here for the user
-    }
-  } else if (gameState === "puttingOnDress") {
-    gameState = "puttingOnShoes";
-  } else if (gameState === "puttingOnShoes") {
-    gameState = "puttingOnHair";
-  } else if (gameState === "puttingOnHair") {
-    if (selectedHairImage !== null) { // Check if a hair image has been selected
-      showHairSelectionMessage = true;
-      selectionMessageStartTime = millis(); // Record the current time
-      gameState = "showingHairSelectionMessage"; // Transition to the new message state
-    } else {
-      console.log("Please select a hairstyle first!"); // Feedback if no hair is selected
-      // You can also add an on-screen message here for the user
-    }
-  }
-}
-
-function inside(mx, my, cx, cy, w = width * 0.09375, h = height * 0.0604) { // 180x50
-  return mx > cx - w / 2 && mx < cx + w / 2 &&
-    my > cy - h / 2 && my < cy + h / 2;
+function inside(px, py, rectX, rectY, rectWidth, rectHeight) {
+  return px > rectX - rectWidth / 2 &&
+    px < rectX + rectWidth / 2 &&
+    py > rectY - rectHeight / 2 &&
+    py < rectY + rectHeight / 2;
 }
